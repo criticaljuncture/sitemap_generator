@@ -7,16 +7,16 @@ namespace :sitemap do
     load File.expand_path(File.join(File.dirname(__FILE__), "../rails/install.rb"))
   end
 
-  desc "Delete all Sitemap files in public/ directory"
+  desc "Delete all Sitemap files"
   task :clean do
-    sitemap_files = Dir[File.join(RAILS_ROOT, 'public/sitemap*.xml.gz')]
+    sitemap_files = Dir[File.join(RAILS_ROOT, 'public', SitemapGenerator::Sitemap.subdirectory, 'sitemap*.xml.gz')]
     FileUtils.rm sitemap_files
   end
 
-  desc "Create Sitemap XML files in public/ directory"
-  desc "Create Sitemap XML files in public/ directory (rake -s for no output)"
+  desc "Create Sitemap XML files"
+  desc "Create Sitemap XML files (rake -s for no output)"
   task :refresh => ['sitemap:create'] do
-    ping_search_engines("sitemap_index.xml.gz")
+    ping_search_engines(File.join( SitemapGenerator::Sitemap.subdirectory, "sitemap_index.xml.gz"))
   end
 
   desc "Create Sitemap XML files (don't ping search engines)"
@@ -45,7 +45,7 @@ namespace :sitemap do
       buffer = ''
       xml = Builder::XmlMarkup.new(:target=>buffer)
       eval(open(SitemapGenerator.templates[:sitemap_xml]).read, binding)
-      filename = File.join(RAILS_ROOT, "public/sitemap#{index+1}.xml.gz")
+      filename = File.join(RAILS_ROOT, "public", SitemapGenerator::Sitemap.subdirectory, "sitemap#{index+1}.xml.gz")
       Zlib::GzipWriter.open(filename) do |gz|
         gz.write buffer
       end
@@ -58,7 +58,7 @@ namespace :sitemap do
     buffer = ''
     xml = Builder::XmlMarkup.new(:target=>buffer)
     eval(open(SitemapGenerator.templates[:sitemap_index]).read, binding)
-    filename = File.join(RAILS_ROOT, "public/sitemap_index.xml.gz")
+    filename = File.join(RAILS_ROOT, "public", SitemapGenerator::Sitemap.subdirectory, "sitemap_index.xml.gz")
     Zlib::GzipWriter.open(filename) do |gz|
       gz.write buffer
     end
