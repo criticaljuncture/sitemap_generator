@@ -34,7 +34,7 @@ namespace :sitemap do
 
     raise(ArgumentError, "Default hostname not defined") if SitemapGenerator::Sitemap.default_host.blank?
 
-    links_grps = SitemapGenerator::Sitemap.links.in_groups_of(50000, false)
+    links_grps = SitemapGenerator::Sitemap.links.in_groups_of(25000, false)
     raise(ArgumentError, "TOO MANY LINKS!! I really thought 2,500,000,000 links would be enough for anybody!") if links_grps.length > 50000
 
     Rake::Task['sitemap:clean'].invoke
